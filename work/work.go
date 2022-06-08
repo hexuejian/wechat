@@ -25,6 +25,11 @@ func NewWork(cfg *config.Config) *Work {
 	return &Work{ctx: ctx}
 }
 
+// SetAccessTokenHandle 自定义access_token获取方式
+func (wk *Work) SetAccessTokenHandle(accessTokenHandle credential.AccessTokenHandle) {
+	wk.ctx.AccessTokenHandle = accessTokenHandle
+}
+
 // GetContext get Context
 func (wk *Work) GetContext() *context.Context {
 	return wk.ctx
