@@ -2,12 +2,15 @@ package work
 
 import (
 	"github.com/silenceper/wechat/v2/credential"
+	"github.com/silenceper/wechat/v2/work/addresslist"
 	"github.com/silenceper/wechat/v2/work/config"
 	"github.com/silenceper/wechat/v2/work/context"
 	"github.com/silenceper/wechat/v2/work/externalcontact"
 	"github.com/silenceper/wechat/v2/work/kf"
+	"github.com/silenceper/wechat/v2/work/material"
 	"github.com/silenceper/wechat/v2/work/msgaudit"
 	"github.com/silenceper/wechat/v2/work/oauth"
+	"github.com/silenceper/wechat/v2/work/robot"
 )
 
 // Work 企业微信
@@ -53,4 +56,19 @@ func (wk *Work) GetKF() (*kf.Client, error) {
 // GetExternalContact get external_contact
 func (wk *Work) GetExternalContact() *externalcontact.Client {
 	return externalcontact.NewClient(wk.ctx)
+}
+
+// GetAddressList get address_list
+func (wk *Work) GetAddressList() *addresslist.Client {
+	return addresslist.NewClient(wk.ctx)
+}
+
+// GetMaterial get material
+func (wk *Work) GetMaterial() *material.Client {
+	return material.NewClient(wk.ctx)
+}
+
+// GetRobot get robot
+func (wk *Work) GetRobot() *robot.Client {
+	return robot.NewClient(wk.ctx)
 }
