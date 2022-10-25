@@ -78,6 +78,10 @@ const (
 	EventWxaMediaCheck EventType = "wxa_media_check"
 	// EventSubscribeMsgPopupEvent 订阅通知事件推送
 	EventSubscribeMsgPopupEvent EventType = "subscribe_msg_popup_event"
+	// EventSubscribeMsgChangeEvent 订阅变更事件推送
+	EventSubscribeMsgChangeEvent EventType = "subscribe_msg_change_event"
+	// EventSubscribeMsgSentEvent 订阅发送结果事件推送
+	EventSubscribeMsgSentEvent EventType = "subscribe_msg_sent_event"
 	// EventPublishJobFinish 发布任务完成
 	EventPublishJobFinish EventType = "PUBLISHJOBFINISH"
 	// EventWeappAuditSuccess 审核通过
@@ -157,11 +161,21 @@ type MixMessage struct {
 		Poiname   string  `xml:"Poiname"`
 	}
 
-	subscribeMsgPopupEventList []SubscribeMsgPopupEvent `json:"-"`
+	subscribeMsgPopupEventList  []SubscribeMsgPopupEvent  `json:"-"`
+	subscribeMsgChangeEventList []SubscribeMsgChangeEvent `json:"-"`
+	subscribeMsgSentEventList   []SubscribeMsgSentEvent   `json:"-"`
 
 	SubscribeMsgPopupEvent []struct {
 		List SubscribeMsgPopupEvent `xml:"List"`
 	} `xml:"SubscribeMsgPopupEvent"`
+
+	SubscribeMsgChangeEvent []struct {
+		List SubscribeMsgChangeEvent `xml:"List"`
+	} `xml:"SubscribeMsgChangeEvent"`
+
+	SubscribeMsgSentEvent []struct {
+		List SubscribeMsgSentEvent `xml:"List"`
+	} `xml:"SubscribeMsgSentEvent"`
 
 	// 事件相关：发布能力
 	PublishEventInfo struct {
@@ -231,6 +245,20 @@ type SubscribeMsgPopupEvent struct {
 	PopupScene            int    `xml:"PopupScene" json:"PopupScene,string"`
 }
 
+// SubscribeMsgChangeEvent 订阅变更事件推送的消息体
+type SubscribeMsgChangeEvent struct {
+	TemplateID            string `xml:"TemplateId" json:"TemplateId"`
+	SubscribeStatusString string `xml:"SubscribeStatusString" json:"SubscribeStatusString"`
+}
+
+// SubscribeMsgSentEvent 订阅消息发送结果事件推送的消息体
+type SubscribeMsgSentEvent struct {
+	TemplateID  string `xml:"TemplateId" json:"TemplateId"`
+	MsgID       string `xml:"MsgID" json:"MsgID"`
+	ErrorCode   int    `xml:"ErrorCode" json:"ErrorCode"`
+	ErrorStatus string `xml:"ErrorStatus" json:"ErrorStatus"`
+}
+
 // SetSubscribeMsgPopupEvents 设置订阅消息事件
 func (s *MixMessage) SetSubscribeMsgPopupEvents(list []SubscribeMsgPopupEvent) {
 	s.subscribeMsgPopupEventList = list
@@ -243,6 +271,40 @@ func (s *MixMessage) GetSubscribeMsgPopupEvents() []SubscribeMsgPopupEvent {
 	}
 	list := make([]SubscribeMsgPopupEvent, len(s.SubscribeMsgPopupEvent))
 	for i, item := range s.SubscribeMsgPopupEvent {
+		list[i] = item.List
+	}
+	return list
+}
+
+// SetSubscribeMsgChangeEvents 设置订阅消息变更事件
+func (s *MixMessage) SetSubscribeMsgChangeEvents(list []SubscribeMsgChangeEvent) {
+	s.subscribeMsgChangeEventList = list
+}
+
+// GetSubscribeMsgChangeEvents 获取订阅消息变更事件数据
+func (s *MixMessage) GetSubscribeMsgChangeEvents() []SubscribeMsgChangeEvent {
+	if s.subscribeMsgChangeEventList != nil {
+		return s.subscribeMsgChangeEventList
+	}
+	list := make([]SubscribeMsgChangeEvent, len(s.SubscribeMsgChangeEvent))
+	for i, item := range s.SubscribeMsgChangeEvent {
+		list[i] = item.List
+	}
+	return list
+}
+
+// SetSubscribeMsgSentEvents 设置订阅消息发送结果事件
+func (s *MixMessage) SetSubscribeMsgSentEvents(list []SubscribeMsgSentEvent) {
+	s.subscribeMsgSentEventList = list
+}
+
+// GetSubscribeMsgSentEvents 获取订阅消息发送结果事件数据
+func (s *MixMessage) GetSubscribeMsgSentEvents() []SubscribeMsgSentEvent {
+	if s.subscribeMsgSentEventList != nil {
+		return s.subscribeMsgSentEventList
+	}
+	list := make([]SubscribeMsgSentEvent, len(s.SubscribeMsgSentEvent))
+	for i, item := range s.SubscribeMsgSentEvent {
 		list[i] = item.List
 	}
 	return list

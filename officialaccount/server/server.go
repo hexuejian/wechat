@@ -199,7 +199,7 @@ func (srv *Server) parseRequestMessage(rawXMLMsgBytes []byte) (msg *message.MixM
 		return
 	}
 	// nonstandard json, 目前小程序订阅消息返回数据格式不标准，订阅消息模板单个List返回是对象，多个List返回是数组。
-	if msg.MsgType == message.MsgTypeEvent {
+	if msg.MsgType == message.MsgTypeEvent && msg.Event == message.EventSubscribeMsgPopupEvent {
 		listData := gjson.Get(string(rawXMLMsgBytes), "List")
 		if listData.IsObject() {
 			listItem := message.SubscribeMsgPopupEvent{}
@@ -213,6 +213,42 @@ func (srv *Server) parseRequestMessage(rawXMLMsgBytes []byte) (msg *message.MixM
 				return msg, parseErr
 			}
 			msg.SetSubscribeMsgPopupEvents(listItems)
+		}
+	}
+
+	// 订阅消息变更
+	if msg.MsgType == message.MsgTypeEvent && msg.Event == message.EventSubscribeMsgChangeEvent {
+		listData := gjson.Get(string(rawXMLMsgBytes), "List")
+		if listData.IsObject() {
+			listItem := message.SubscribeMsgChangeEvent{}
+			if parseErr := json.Unmarshal([]byte(listData.Raw), &listItem); parseErr != nil {
+				return msg, parseErr
+			}
+			msg.SetSubscribeMsgChangeEvents([]message.SubscribeMsgChangeEvent{listItem})
+		} else if listData.IsArray() {
+			listItems := make([]message.SubscribeMsgChangeEvent, 0)
+			if parseErr := json.Unmarshal([]byte(listData.Raw), &listItems); parseErr != nil {
+				return msg, parseErr
+			}
+			msg.SetSubscribeMsgChangeEvents(listItems)
+		}
+	}
+
+	// 订阅消息推送结果
+	if msg.MsgType == message.MsgTypeEvent && msg.Event == message.EventSubscribeMsgSentEvent {
+		listData := gjson.Get(string(rawXMLMsgBytes), "List")
+		if listData.IsObject() {
+			listItem := message.SubscribeMsgSentEvent{}
+			if parseErr := json.Unmarshal([]byte(listData.Raw), &listItem); parseErr != nil {
+				return msg, parseErr
+			}
+			msg.SetSubscribeMsgSentEvents([]message.SubscribeMsgSentEvent{listItem})
+		} else if listData.IsArray() {
+			listItems := make([]message.SubscribeMsgSentEvent, 0)
+			if parseErr := json.Unmarshal([]byte(listData.Raw), &listItems); parseErr != nil {
+				return msg, parseErr
+			}
+			msg.SetSubscribeMsgSentEvents(listItems)
 		}
 	}
 	return
